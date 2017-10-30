@@ -8,12 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace GitHubAutoresponder
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace GitHubAutoresponder {
+    public class Program {
+        public static void Main(string[] args) {
             BuildWebHost(args).Run();
         }
 
