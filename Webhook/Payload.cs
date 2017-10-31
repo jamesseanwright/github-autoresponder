@@ -1,5 +1,5 @@
 namespace GitHubAutoresponder.Webhook {
-    class Payload {
-
+    public class Payload {
+        public string FooBar { get; set; }
     }
 }

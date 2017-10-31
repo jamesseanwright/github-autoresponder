@@ -2,34 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GitHubAutoresponder.Responder;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GitHubAutoresponder.Webhook {
     [Route("api/[controller]")]
     public class WebhookController : Controller {
-        [HttpGet]
-        public IEnumerable<string> Get() {
-            return new string[] { "value1", "value2" };
-        }
+        private IGitHubResponder gitHubResponder;
 
-        [HttpGet("{id}")]
-        public string Get(int id) {
-            return "value";
+        public WebhookController(IGitHubResponder gitHubResponder) {
+            this.gitHubResponder = gitHubResponder;
         }
 
         [HttpPost]
-        public void Post([FromBody]string value) {
-
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value) {
-
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id) {
-
+        public async Task PostAsync([FromBody]Payload payload) {
+            await this.gitHubResponder.RespondAsync(payload);
+            Ok(payload.FooBar);
         }
     }
 }
