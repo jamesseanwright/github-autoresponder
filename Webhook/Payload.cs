@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace GitHubAutoresponder.Webhook {
+    [CustomValidation(typeof (Payload), "HasValidCommentable")]
     public class Payload {
         [Required]
         public string Action { get; set; }
@@ -13,21 +14,16 @@ namespace GitHubAutoresponder.Webhook {
         public Repository Repository { get; set; }
 
         public Commentable Issue { get; set; }
-
         public Commentable PullRequest { get; set; }
 
         public Commentable Commentable {
             get {
-                if (Issue != null) {
-                    return Issue;
-                }
-
-                if (PullRequest != null) {
-                    return PullRequest;
-                }
-
-                throw new CommentableException(); // TODO: model validation
+                return Issue != null ? Issue : PullRequest;
             }
+        }
+
+        public static ValidationResult HasValidCommentable(Payload payload, ValidationContext context) {
+            return ValidationResult.Success;
         }
     }
 }

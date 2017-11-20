@@ -1,6 +1,7 @@
 using Xunit;
 using GitHubAutoresponder.Webhook.Tests;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace GitHubAutoresponder.Webhook.Tests {
     public class PayloadTests
@@ -28,10 +29,15 @@ namespace GitHubAutoresponder.Webhook.Tests {
         }
 
         [Fact]
-        public void CommentableShouldThrowIfIssueAndPullRequestAreBothNull() {
+        public void HasValidCommentableReturnsValidationSuccessIfPayloadHasIssue() {
             Payload payload = new Payload();
 
-            Assert.Throws<CommentableException>(() => payload.Commentable);
+            ValidationResult result = Payload.HasValidCommentable(
+                payload,
+                new ValidationContext(payload)
+            );
+
+            Assert.StrictEqual<ValidationResult>(ValidationResult.Success, result);
         }
     }
 }
