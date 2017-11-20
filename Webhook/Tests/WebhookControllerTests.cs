@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Moq;
 using GitHubAutoresponder.Responder;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GitHubAutoresponder.Webhook.Tests {
     public class WebhookControllerTests : IDisposable {
@@ -26,9 +27,25 @@ namespace GitHubAutoresponder.Webhook.Tests {
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
                 .Returns(Task.FromResult<object>(null));
 
-            await this.webhookController.PostAsync(payload);
+            StatusCodeResult result = await this.webhookController.PostAsync(payload);
 
+            Assert.StrictEqual<int>(200, result.StatusCode);
             this.gitHubResponder.Verify(g => g.RespondAsync(payload), Times.Once());
+        }
+
+        [Fact]
+        public async Task ItShouldInvokeBadRequestWhenPayloadIsInvalid() {
+            Payload payload = new Payload();
+
+            this.gitHubResponder
+                .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
+                .Returns(Task.FromResult<object>(null));
+
+            this.webhookController.ModelState.AddModelError("key", "Some model error");
+
+            StatusCodeResult result = await this.webhookController.PostAsync(payload);
+
+            Assert.StrictEqual<int>(400, result.StatusCode);
         }
     }
 }

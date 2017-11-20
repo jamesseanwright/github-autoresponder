@@ -15,9 +15,13 @@ namespace GitHubAutoresponder.Webhook {
         }
 
         [HttpPost]
-        public async Task PostAsync([FromBody]Payload payload) {
+        public async Task<StatusCodeResult> PostAsync([FromBody]Payload payload) {
+            if (!ModelState.IsValid) {
+                return BadRequest();
+            }
+
             await this.gitHubResponder.RespondAsync(payload);
-            Ok();
+            return Ok();
         }
     }
 }
