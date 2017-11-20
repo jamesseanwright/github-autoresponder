@@ -26,7 +26,7 @@ namespace GitHubAutoresponder.Webhook {
                     return PullRequest;
                 }
 
-                throw new CommentableException();
+                throw new CommentableException(); // TODO: model validation
             }
         }
     }
