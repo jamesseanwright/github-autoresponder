@@ -8,8 +8,6 @@ namespace GitHubAutoresponder.Responder {
 
         public GitHubResponder(IResponseFactory responseFactory) {
             this.responseFactory = responseFactory;
-
-            Console.WriteLine(this.responseFactory);
         }
 
         async Task IGitHubResponder.RespondAsync(Payload payload) {
