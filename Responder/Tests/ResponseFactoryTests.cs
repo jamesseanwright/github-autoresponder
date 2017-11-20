@@ -28,7 +28,7 @@ James
 
             Response response = factory.CreateFromPayload(payload);
 
-            Assert.StrictEqual<string>(expectedMessage, response.Body);
+            Assert.Equal(expectedMessage, response.Body);
         }
     }
 }
