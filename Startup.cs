@@ -36,7 +36,7 @@ namespace GitHubAutoresponder {
 
         private void ConfigureJsonSerialiser(MvcJsonOptions options) {
             DefaultContractResolver resolver = new DefaultContractResolver {
-                NamingStrategy = new SnakeCaseNamingStrategy(),
+                NamingStrategy = new SnakeCaseNamingStrategy(), // Required for the GitHub webhook and API
             };
 
             options.SerializerSettings.ContractResolver = resolver;
