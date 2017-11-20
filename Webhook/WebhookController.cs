@@ -17,7 +17,7 @@ namespace GitHubAutoresponder.Webhook {
         [HttpPost]
         public async Task PostAsync([FromBody]Payload payload) {
             await this.gitHubResponder.RespondAsync(payload);
-            Ok(payload.FooBar);
+            Ok();
         }
     }
 }
