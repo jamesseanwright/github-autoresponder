@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using GitHubAutoresponder.Responder;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +18,26 @@ namespace GitHubAutoresponder.Webhook {
         }
 
         [HttpPost]
-        public async Task<StatusCodeResult> PostAsync([FromBody]Payload payload) {
+        public async Task<ContentResult> PostAsync([FromBody]Payload payload) {
             if (!ModelState.IsValid) {
-                return BadRequest();
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+
+                return Content(
+                    ModelState.ToString(),
+                    MediaTypeNames.Text.Plain,
+                    Encoding.UTF8
+                );
             }
 
             await this.gitHubResponder.RespondAsync(payload);
-            return Ok();
+
+            Response.StatusCode = (int) HttpStatusCode.OK;
+
+            return Content(
+                "OK",
+                MediaTypeNames.Text.Plain,
+                Encoding.UTF8
+            );
         }
     }
 }
