@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GitHubAutoresponder.Responder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace GitHubAutoresponder.Webhook {
     [Route("api/[controller]")]
@@ -30,7 +31,7 @@ namespace GitHubAutoresponder.Webhook {
 
         private ContentResult CreateValidationErrorResult() {
             ContentResult result = Content(
-                "OK",
+                ModelState.Aggregate<KeyValuePair<string, ModelStateEntry>, string>("", (errorMessage, kvp) => errorMessage + kvp.Value.Errors.First().ErrorMessage),
                 MediaTypeNames.Text.Plain,
                 Encoding.UTF8
             );

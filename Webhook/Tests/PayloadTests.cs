@@ -1,5 +1,4 @@
 using Xunit;
-using GitHubAutoresponder.Webhook.Tests;
 using System;
 using System.ComponentModel.DataAnnotations;
 

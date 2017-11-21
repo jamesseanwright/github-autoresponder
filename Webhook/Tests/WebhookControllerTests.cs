@@ -52,7 +52,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
             ContentResult result = await this.webhookController.PostAsync(payload);
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
-            Assert.Equal("OK", result.Content);
+            Assert.Equal("Some model error", result.Content);
         }
     }
 }
