@@ -24,7 +24,7 @@ namespace GitHubAutoresponder {
             services.AddMvc()
                 .AddJsonOptions(ConfigureJsonSerialiser);
 
-            Dependencies.Inject(services);
+            Dependencies.Register(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
