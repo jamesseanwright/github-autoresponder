@@ -9,15 +9,22 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Net;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace GitHubAutoresponder.Webhook.Tests {
     public class WebhookControllerTests : IDisposable {
         private Mock<IGitHubResponder> gitHubResponder;
+        private Mock<IModelStateConverter> modelStateConverter;
         private WebhookController webhookController;
 
         public WebhookControllerTests() {
             this.gitHubResponder = new Mock<IGitHubResponder>();
-            this.webhookController = new WebhookController(this.gitHubResponder.Object);
+            this.modelStateConverter = new Mock<IModelStateConverter>();
+
+            this.webhookController = new WebhookController(
+                this.gitHubResponder.Object,
+                this.modelStateConverter.Object
+            );
         }
 
         public void Dispose() {
@@ -47,12 +54,16 @@ namespace GitHubAutoresponder.Webhook.Tests {
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
                 .Returns(Task.FromResult<object>(null));
 
+            this.modelStateConverter
+                .Setup(m => m.AsString(this.webhookController.ModelState))
+                .Returns("Model validation errors");
+
             this.webhookController.ModelState.AddModelError("key", "Some model error");
 
             ContentResult result = await this.webhookController.PostAsync(payload);
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
-            Assert.Equal("Some model error", result.Content);
+            Assert.Equal("Model validation errors", result.Content);
         }
     }
 }

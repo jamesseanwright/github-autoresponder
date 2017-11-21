@@ -13,9 +13,11 @@ namespace GitHubAutoresponder.Webhook {
     [Route("api/[controller]")]
     public class WebhookController : Controller {
         private IGitHubResponder gitHubResponder;
+        private IModelStateConverter modelStateConverter;
 
-        public WebhookController(IGitHubResponder gitHubResponder) {
+        public WebhookController(IGitHubResponder gitHubResponder, IModelStateConverter modelStateConverter) {
             this.gitHubResponder = gitHubResponder;
+            this.modelStateConverter = modelStateConverter;
         }
 
         [HttpPost]
@@ -31,7 +33,7 @@ namespace GitHubAutoresponder.Webhook {
 
         private ContentResult CreateValidationErrorResult() {
             ContentResult result = Content(
-                ModelState.Aggregate<KeyValuePair<string, ModelStateEntry>, string>("", (errorMessage, kvp) => errorMessage + kvp.Value.Errors.First().ErrorMessage),
+                modelStateConverter.AsString(ModelState),
                 MediaTypeNames.Text.Plain,
                 Encoding.UTF8
             );
