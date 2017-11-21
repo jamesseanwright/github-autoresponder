@@ -20,24 +20,28 @@ namespace GitHubAutoresponder.Webhook {
         [HttpPost]
         public async Task<ContentResult> PostAsync([FromBody]Payload payload) {
             if (!ModelState.IsValid) {
-                Response.StatusCode = (int) HttpStatusCode.BadRequest;
-
-                return Content(
+                ContentResult errorResult = Content(
                     ModelState.ToString(),
                     MediaTypeNames.Text.Plain,
                     Encoding.UTF8
                 );
+
+                errorResult.StatusCode = (int) HttpStatusCode.BadRequest;
+
+                return errorResult;
             }
 
             await this.gitHubResponder.RespondAsync(payload);
 
-            Response.StatusCode = (int) HttpStatusCode.OK;
-
-            return Content(
+            ContentResult result = Content(
                 "OK",
                 MediaTypeNames.Text.Plain,
                 Encoding.UTF8
             );
+
+            result.StatusCode = (int) HttpStatusCode.OK;
+
+            return result;
         }
     }
 }

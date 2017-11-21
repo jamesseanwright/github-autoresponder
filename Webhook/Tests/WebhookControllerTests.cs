@@ -18,14 +18,6 @@ namespace GitHubAutoresponder.Webhook.Tests {
         public WebhookControllerTests() {
             this.gitHubResponder = new Mock<IGitHubResponder>();
             this.webhookController = new WebhookController(this.gitHubResponder.Object);
-
-            this.webhookController.ControllerContext = new ControllerContext(
-                new ActionContext(
-                    new DefaultHttpContext(),
-                    new RouteData(),
-                    new ControllerActionDescriptor()
-                )
-            );
         }
 
         public void Dispose() {
@@ -42,7 +34,8 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             ContentResult result = await this.webhookController.PostAsync(payload);
 
-            Assert.StrictEqual<int>((int) HttpStatusCode.OK, this.webhookController.Response.StatusCode);
+            Assert.StrictEqual<int?>((int) HttpStatusCode.OK, result.StatusCode);
+            Assert.Equal("OK", result.Content);
             this.gitHubResponder.Verify(g => g.RespondAsync(payload), Times.Once());
         }
 
@@ -58,7 +51,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             ContentResult result = await this.webhookController.PostAsync(payload);
 
-            Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, this.webhookController.Response.StatusCode);
+            Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
         }
     }
 }
