@@ -23,6 +23,12 @@ namespace GitHubAutoresponder.Webhook {
         }
 
         public static ValidationResult HasValidCommentable(Payload payload, ValidationContext context) {
+            if (payload.Issue == null && payload.PullRequest == null) {
+                return new ValidationResult(
+                    "Payload should contain either an issue or a pull_request property"
+                );
+            }
+
             return ValidationResult.Success;
         }
     }
