@@ -10,7 +10,7 @@ using Microsoft.Net.Http.Headers;
 namespace GitHubAutoresponder.Responder {
     public class GitHubResponder : IGitHubResponder {
         const string CONTENT_TYPE_HEADER = "application/vnd.github.v3+json";
-        const string USER_AGENT_HEADER = "GitHubAutoResponder/1.0";
+        const string USER_AGENT_HEADER = "GitHubAutoResponder";
 
         private IResponseFactory responseFactory;
         private HttpClient httpClient;
@@ -21,17 +21,12 @@ namespace GitHubAutoresponder.Responder {
             HttpClient httpClient,
             IJsonSerialiser jsonSerialiser
         ) {
-            // var handler = new HttpClientHandler {
-            //     Proxy = new WebProxy("http://localhost:8888"),
-            // };
-
-            // handler.ClientCertificates.Add(new X509Certificate("/home/james/dev/charles-ssl.cer"));
-
             this.httpClient = httpClient;
             this.jsonSerialiser = jsonSerialiser;
             this.responseFactory = responseFactory;
 
             this.httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, USER_AGENT_HEADER);
+            this.httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, "Basic base64 stuff here");
         }
 
         async Task<bool> IGitHubResponder.RespondAsync(Payload payload) {

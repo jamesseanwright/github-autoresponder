@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace GitHubAutoresponder.Responder {
     public class Response {
         public Response(string body) {

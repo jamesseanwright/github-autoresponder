@@ -6,16 +6,18 @@ namespace GitHubAutoresponder.Responder {
         private JsonSerializer serializer;
 
         public JsonSerialiser() {
-            this.serializer = new JsonSerializer();
+            this.serializer = new JsonSerializer {
+                ContractResolver = JsonContractResolver.Resolver
+            };
         }
 
         public Stream Serialise(object obj) {
             MemoryStream stream = new MemoryStream();
 
-            using (StreamWriter streamWriter = new StreamWriter(stream))
-            using (JsonTextWriter writer = new JsonTextWriter(streamWriter)) {
-                this.serializer.Serialize(writer, obj);
-            }
+            StreamWriter streamWriter = new StreamWriter(stream);
+            JsonTextWriter writer = new JsonTextWriter(streamWriter);
+
+            this.serializer.Serialize(writer, obj);
 
             return stream;
         }
