@@ -1,3 +1,4 @@
+using System.Net.Http;
 using GitHubAutoresponder.Responder;
 using GitHubAutoresponder.Webhook;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,8 @@ namespace GitHubAutoresponder {
             services.AddSingleton(typeof (IGitHubResponder), typeof (GitHubResponder));
             services.AddSingleton(typeof (IResponseFactory), typeof (ResponseFactory));
             services.AddSingleton(typeof (IModelStateConverter), typeof (ModelStateConverter));
+            services.AddSingleton(typeof (IJsonSerialiser), typeof (JsonSerialiser));
+            services.AddSingleton(typeof (HttpClient), typeof (HttpClient));
         }
     }
 }

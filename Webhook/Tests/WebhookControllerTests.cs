@@ -37,7 +37,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             this.gitHubResponder
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
-                .Returns(Task.FromResult<object>(null));
+                .Returns(Task.FromResult<bool>(true));
 
             ContentResult result = await this.webhookController.PostAsync(payload);
 
@@ -49,10 +49,6 @@ namespace GitHubAutoresponder.Webhook.Tests {
         [Fact]
         public async Task ItShouldInvokeBadRequestWhenPayloadIsInvalid() {
             Payload payload = new Payload();
-
-            this.gitHubResponder
-                .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
-                .Returns(Task.FromResult<object>(null));
 
             this.modelStateConverter
                 .Setup(m => m.AsString(this.webhookController.ModelState))
