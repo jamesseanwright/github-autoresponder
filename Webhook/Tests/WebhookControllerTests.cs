@@ -37,7 +37,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             this.gitHubResponder
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
-                .Returns(Task.FromResult<bool>(true));
+                .ReturnsAsync(true);
 
             ContentResult result = await this.webhookController.PostAsync(payload);
 
@@ -47,7 +47,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
         }
 
         [Fact]
-        public async Task ItShouldInvokeBadRequestWhenPayloadIsInvalid() {
+        public async Task ItShouldRespondWithBadRequestWhenPayloadIsInvalid() {
             Payload payload = new Payload();
 
             this.modelStateConverter
@@ -60,6 +60,19 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
             Assert.Equal("Model validation errors", result.Content);
+        }
+
+        [Fact]
+        public async Task ItShouldRespondWithBadGatewayWhenUpstreamReturnsError() {
+            Payload payload = new Payload();
+
+            this.gitHubResponder
+                .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
+                .ReturnsAsync(false);
+
+            ContentResult result = await this.webhookController.PostAsync(payload);
+
+            Assert.StrictEqual<int?>((int) HttpStatusCode.BadGateway, result.StatusCode);
         }
     }
 }

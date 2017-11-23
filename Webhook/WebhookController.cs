@@ -26,9 +26,9 @@ namespace GitHubAutoresponder.Webhook {
                 return this.CreateValidationErrorResult();
             }
 
-            await this.gitHubResponder.RespondAsync(payload);
+            bool isSuccessful = await this.gitHubResponder.RespondAsync(payload);
 
-            return this.CreateSuccessResult();
+            return isSuccessful? this.CreateSuccessResult() : this.CreateUpstreamErrorResult();
         }
 
         private ContentResult CreateValidationErrorResult() {
@@ -39,6 +39,18 @@ namespace GitHubAutoresponder.Webhook {
             );
 
             result.StatusCode = (int) HttpStatusCode.BadRequest;
+
+            return result;
+        }
+
+        private ContentResult CreateUpstreamErrorResult() {
+            ContentResult result = Content(
+                "The GitHub API returned an error",
+                MediaTypeNames.Text.Plain,
+                Encoding.UTF8
+            );
+
+            result.StatusCode = (int) HttpStatusCode.BadGateway;
 
             return result;
         }

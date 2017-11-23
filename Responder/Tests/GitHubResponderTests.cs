@@ -1,10 +1,10 @@
+using Moq;
+using Xunit;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using GitHubAutoresponder.Shared;
 using GitHubAutoresponder.Webhook;
-using Moq;
-using Xunit;
 
 namespace GitHubAutoresponder.Responder.Tests {
     public class GitHubResponderTests {
