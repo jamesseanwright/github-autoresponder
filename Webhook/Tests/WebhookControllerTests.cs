@@ -26,7 +26,6 @@ namespace GitHubAutoresponder.Webhook.Tests {
         private Mock<IObjectModelValidator> objectValidator;
         private Mock<IEnvironment> environment;
         private WebhookController webhookController;
-        private Payload payload;
 
         public WebhookControllerTests() {
             this.gitHubResponder = new Mock<IGitHubResponder>();
