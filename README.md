@@ -55,7 +55,5 @@ A **Base64-encoded** string following a `<responding_username>:<personal_api_tok
 4. In _Payload URL_, enter the absolute URL via which the webhook can be accessed, including the `/api/webhook` path
 5. Select _application/json_ from the _Content type_ dropdown
 6. Enter the webhook secret that you most likely generated in the previous section (see _`GHAR_SECRET`_)
-7. Under _Which events would you like to trigger this webhook?_, choose _Let me select individual events_, and select:
-  a) _Issues_
-  b) _Pull request_
+7. Under _Which events would you like to trigger this webhook?_, choose _Let me select individual events_, and select: _Issues_; and _Pull request_
 8. Click _Add webhook_ to complete the registration
