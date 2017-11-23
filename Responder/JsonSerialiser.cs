@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using GitHubAutoresponder.Shared;
 using Newtonsoft.Json;
 
 namespace GitHubAutoresponder.Responder {

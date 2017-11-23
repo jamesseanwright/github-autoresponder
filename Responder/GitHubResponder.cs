@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using GitHubAutoresponder.Shared;
 using GitHubAutoresponder.Webhook;
 using Microsoft.Net.Http.Headers;
 
@@ -15,18 +16,21 @@ namespace GitHubAutoresponder.Responder {
         private IResponseFactory responseFactory;
         private HttpClient httpClient;
         private IJsonSerialiser jsonSerialiser;
+        private IEnvironment environment;
 
         public GitHubResponder(
             IResponseFactory responseFactory,
             HttpClient httpClient,
-            IJsonSerialiser jsonSerialiser
+            IJsonSerialiser jsonSerialiser,
+            IEnvironment environment
         ) {
             this.httpClient = httpClient;
             this.jsonSerialiser = jsonSerialiser;
             this.responseFactory = responseFactory;
+            this.environment = environment;
 
             this.httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, USER_AGENT_HEADER);
-            this.httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, "Basic amFtZXNzZWFud3JpZ2h0OjFmYmJkYzBmZmJlMjA3ZWI3ZGU5MDQyYmEyMWM3YWYzM2U5NjAxN2Q=");
+            this.httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, $"Basic {this.environment.EncodededCredentials}");
         }
 
         async Task<bool> IGitHubResponder.RespondAsync(Payload payload) {
