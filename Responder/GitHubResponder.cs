@@ -46,8 +46,6 @@ namespace GitHubAutoresponder.Responder {
                 content
             );
 
-            string b = await response.Content.ReadAsStringAsync();
-
             return (int) response.StatusCode < 400;
         }
     }
