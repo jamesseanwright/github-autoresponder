@@ -96,6 +96,30 @@ namespace GitHubAutoresponder.Webhook.Tests {
         }
 
         [Fact]
+        public async Task ItShouldRespondWithUnauthorizedWhenTheSignatureIsInvalid() {
+            string gitHubSignature = "signature";
+            string secret = "secret";
+            string body = "body";
+            Payload payload = new Payload();
+
+            this.webhookController.Request.Headers.Add("X-Hub-Signature", gitHubSignature);
+            this.webhookController.Request.Body = new MemoryStream(Encoding.ASCII.GetBytes(body));
+
+            this.environment
+                .SetupGet(g => g.Secret)
+                .Returns(secret);
+
+            this.requestValidator
+                .Setup(r => r.IsValidRequest(gitHubSignature, secret, body))
+                .Returns(false);
+
+            ContentResult result = await this.webhookController.PostAsync();
+
+            Assert.StrictEqual<int?>((int) HttpStatusCode.Unauthorized, result.StatusCode);
+            Assert.Equal("This request has incorrect auth data", result.Content);
+        }
+
+        [Fact]
         public async Task ItShouldRespondWithBadRequestWhenPayloadIsInvalid() {
             string gitHubSignature = "signature";
             string secret = "secret";

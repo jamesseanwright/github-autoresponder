@@ -72,7 +72,7 @@ namespace GitHubAutoresponder.Webhook {
 
         private ContentResult CreateUnauthorisedResult() {
             ContentResult result = Content(
-                "This request lacks the required authorisation information",
+                "This request has incorrect auth data",
                 MediaTypeNames.Text.Plain,
                 Encoding.UTF8
             );
