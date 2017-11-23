@@ -16,6 +16,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
             Assert.True(isValid);
         }
 
+        [Fact]
         public void ItShouldReturnFalseWhenTheGeneratedAndExpectedSignaturesDoNotMatch() {
             RequestValidator validator = new RequestValidator();
 
