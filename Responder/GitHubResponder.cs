@@ -21,7 +21,14 @@ namespace GitHubAutoresponder.Responder {
             this.responseFactory = responseFactory;
         }
 
-        async Task<bool> IGitHubResponder.RespondAsync(Payload payload) { // TODO: why is explicit needed
+        async Task<bool> IGitHubResponder.RespondAsync(Payload payload) { // TODO: why is explicit impl needed?
+            bool shouldRespond = payload.Action == "opened";
+
+            if (!shouldRespond) {
+                // silently continue
+                return true;
+            }
+
             Response body = this.responseFactory.CreateFromPayload(payload);
             string serializedResponse = this.jsonSerialiser.Serialise(body);
 
