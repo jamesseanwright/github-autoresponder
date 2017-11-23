@@ -6,7 +6,7 @@ namespace GitHubAutoresponder.Responder {
             // TODO: separate string (read from MD file?)
 
             return new Response($@"
-Hi {payload.Sender.Login},
+Hi @{payload.Sender.Login},
 
 Thanks for your contribution to {payload.Repository.Name}! I am currently travelling, so I will not be able to address this until I return. I apologise for the inconvenience and thank you for your patience.
 

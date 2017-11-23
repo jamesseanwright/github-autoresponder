@@ -18,7 +18,7 @@ namespace GitHubAutoresponder.Responder.Tests {
             };
 
             string expectedMessage = @"
-Hi Bob,
+Hi @Bob,
 
 Thanks for your contribution to some-magic-repo! I am currently travelling, so I will not be able to address this until I return. I apologise for the inconvenience and thank you for your patience.
 
