@@ -25,7 +25,7 @@ namespace GitHubAutoresponder.Responder {
             bool shouldRespond = payload.Action == "opened";
 
             if (!shouldRespond) {
-                // silently continue
+                // silently bypass request
                 return true;
             }
 
