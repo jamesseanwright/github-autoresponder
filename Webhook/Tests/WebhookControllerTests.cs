@@ -153,17 +153,36 @@ namespace GitHubAutoresponder.Webhook.Tests {
             Assert.Equal("Model validation errors", result.Content);
         }
 
-        // [Fact]
-        // public async Task ItShouldRespondWithBadGatewayWhenUpstreamReturnsError() {
-        //     Payload payload = new Payload();
+        [Fact]
+        public async Task ItShouldRespondWithBadGatewayWhenUpstreamReturnsError() {
+            string gitHubSignature = "signature";
+            string secret = "secret";
+            string body = "body";
+            Payload payload = new Payload();
 
-        //     this.gitHubResponder
-        //         .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
-        //         .ReturnsAsync(false);
+            this.webhookController.Request.Headers.Add("X-Hub-Signature", gitHubSignature);
+            this.webhookController.Request.Body = new MemoryStream(Encoding.ASCII.GetBytes(body));
 
-        //     ContentResult result = await this.webhookController.PostAsync();
+            this.requestValidator
+                .Setup(r => r.IsValidRequest(gitHubSignature, secret, body))
+                .Returns(true);
 
-        //     Assert.StrictEqual<int?>((int) HttpStatusCode.BadGateway, result.StatusCode);
-        // }
+            this.jsonSerialiser
+                .Setup(g => g.Deserialise<Payload>(body))
+                .Returns(payload);
+
+            this.gitHubResponder
+                .Setup(g => g.RespondAsync(payload))
+                .ReturnsAsync(false);
+
+            this.environment
+                .SetupGet(g => g.Secret)
+                .Returns(secret);
+
+            ContentResult result = await this.webhookController.PostAsync();
+
+            Assert.StrictEqual<int?>((int) HttpStatusCode.BadGateway, result.StatusCode);
+            Assert.Equal("The GitHub API returned an error", result.Content);
+        }
     }
 }
