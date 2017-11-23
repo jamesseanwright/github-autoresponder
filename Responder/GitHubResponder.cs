@@ -26,14 +26,15 @@ namespace GitHubAutoresponder.Responder {
             this.responseFactory = responseFactory;
 
             this.httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, USER_AGENT_HEADER);
-            this.httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, "Basic base64 stuff here");
+            this.httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, "Basic amFtZXNzZWFud3JpZ2h0OjFmYmJkYzBmZmJlMjA3ZWI3ZGU5MDQyYmEyMWM3YWYzM2U5NjAxN2Q=");
         }
 
         async Task<bool> IGitHubResponder.RespondAsync(Payload payload) {
             Response body = this.responseFactory.CreateFromPayload(payload);
-            Stream responseStream = this.jsonSerialiser.Serialise(body);
-            StreamContent content = new StreamContent(responseStream);
+            string serializedResponse = this.jsonSerialiser.Serialise(body);
+            StringContent content = new StringContent(serializedResponse);
 
+            content.Headers.Remove(HeaderNames.ContentType); // remove default Content-Type header
             content.Headers.Add(HeaderNames.ContentType, CONTENT_TYPE_HEADER);
 
             HttpResponseMessage response = await this.httpClient.PostAsync(
