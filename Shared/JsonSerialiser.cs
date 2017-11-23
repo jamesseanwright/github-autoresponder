@@ -1,9 +1,8 @@
 using System;
 using System.IO;
-using GitHubAutoresponder.Shared;
 using Newtonsoft.Json;
 
-namespace GitHubAutoresponder.Responder {
+namespace GitHubAutoresponder.Shared {
     public class JsonSerialiser : IJsonSerialiser {
         private JsonSerializerSettings settings;
 
@@ -15,6 +14,10 @@ namespace GitHubAutoresponder.Responder {
 
         public string Serialise(object obj) {
             return JsonConvert.SerializeObject(obj, this.settings);
+        }
+
+        public T Deserialise<T>(string json) {
+            return JsonConvert.DeserializeObject<T>(json, this.settings);
         }
     }
 }

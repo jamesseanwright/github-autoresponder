@@ -10,20 +10,30 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using GitHubAutoresponder.Shared;
 
 namespace GitHubAutoresponder.Webhook.Tests {
     public class WebhookControllerTests : IDisposable {
         private Mock<IGitHubResponder> gitHubResponder;
         private Mock<IModelStateConverter> modelStateConverter;
+        private Mock<IJsonSerialiser> jsonSerialiser;
+        private Mock<IRequestValidator> requestValidator;
+        private Mock<IEnvironment> environment;
         private WebhookController webhookController;
 
         public WebhookControllerTests() {
             this.gitHubResponder = new Mock<IGitHubResponder>();
             this.modelStateConverter = new Mock<IModelStateConverter>();
+            this.jsonSerialiser = new Mock<IJsonSerialiser>();
+            this.requestValidator = new Mock<IRequestValidator>();
+            this.environment = new Mock<IEnvironment>();
 
             this.webhookController = new WebhookController(
                 this.gitHubResponder.Object,
-                this.modelStateConverter.Object
+                this.modelStateConverter.Object,
+                this.jsonSerialiser.Object,
+                this.requestValidator.Object,
+                this.environment.Object
             );
         }
 
@@ -39,7 +49,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
                 .ReturnsAsync(true);
 
-            ContentResult result = await this.webhookController.PostAsync(payload);
+            ContentResult result = await this.webhookController.PostAsync();
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.OK, result.StatusCode);
             Assert.Equal("OK", result.Content);
@@ -56,7 +66,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
 
             this.webhookController.ModelState.AddModelError("key", "Some model error");
 
-            ContentResult result = await this.webhookController.PostAsync(payload);
+            ContentResult result = await this.webhookController.PostAsync();
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
             Assert.Equal("Model validation errors", result.Content);
@@ -70,7 +80,7 @@ namespace GitHubAutoresponder.Webhook.Tests {
                 .Setup(g => g.RespondAsync(It.IsAny<Payload>()))
                 .ReturnsAsync(false);
 
-            ContentResult result = await this.webhookController.PostAsync(payload);
+            ContentResult result = await this.webhookController.PostAsync();
 
             Assert.StrictEqual<int?>((int) HttpStatusCode.BadGateway, result.StatusCode);
         }
