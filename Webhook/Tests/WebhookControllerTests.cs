@@ -44,14 +44,21 @@ namespace GitHubAutoresponder.Webhook.Tests {
                 this.environment.Object
             );
 
-            this.webhookController.ControllerContext = new ControllerContext(
-                new ActionContext(
-                    new DefaultHttpContext(),
-                    new RouteData(),
-                    new ControllerActionDescriptor()
-                )
+            ActionContext context = new ActionContext(
+                new DefaultHttpContext(),
+                new RouteData(),
+                new ControllerActionDescriptor(),
+                new ModelStateDictionary()
             );
 
+            this.objectValidator.Setup(o => o.Validate(
+                context,
+                null,
+                It.IsAny<string>(),
+                It.IsAny<Payload>()
+            ));
+
+            this.webhookController.ControllerContext = new ControllerContext(context);
             this.webhookController.ObjectValidator = this.objectValidator.Object;
         }
 
@@ -68,13 +75,6 @@ namespace GitHubAutoresponder.Webhook.Tests {
             this.requestValidator
                 .Setup(r => r.IsValidRequest(gitHubSignature, secret, body))
                 .Returns(true);
-
-            this.objectValidator.Setup(o => o.Validate(
-                It.IsAny<ActionContext>(),
-                It.IsAny<ValidationStateDictionary>(),
-                It.IsAny<string>(),
-                It.IsAny<object>()
-            ));
 
             this.jsonSerialiser
                 .Setup(g => g.Deserialise<Payload>(body))
@@ -95,21 +95,39 @@ namespace GitHubAutoresponder.Webhook.Tests {
             this.gitHubResponder.Verify(g => g.RespondAsync(payload), Times.Once());
         }
 
-        // [Fact]
-        // public async Task ItShouldRespondWithBadRequestWhenPayloadIsInvalid() {
-        //     Payload payload = new Payload();
+        [Fact]
+        public async Task ItShouldRespondWithBadRequestWhenPayloadIsInvalid() {
+            string gitHubSignature = "signature";
+            string secret = "secret";
+            string body = "body";
+            Payload payload = new Payload();
 
-        //     this.modelStateConverter
-        //         .Setup(m => m.AsString(this.webhookController.ModelState))
-        //         .Returns("Model validation errors");
+            this.webhookController.Request.Headers.Add("X-Hub-Signature", gitHubSignature);
+            this.webhookController.Request.Body = new MemoryStream(Encoding.ASCII.GetBytes(body));
 
-        //     this.webhookController.ModelState.AddModelError("key", "Some model error");
+            this.environment
+                .SetupGet(g => g.Secret)
+                .Returns(secret);
 
-        //     ContentResult result = await this.webhookController.PostAsync();
+            this.requestValidator
+                .Setup(r => r.IsValidRequest(gitHubSignature, secret, body))
+                .Returns(true);
 
-        //     Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
-        //     Assert.Equal("Model validation errors", result.Content);
-        // }
+            this.jsonSerialiser
+                .Setup(g => g.Deserialise<Payload>(body))
+                .Returns(payload);
+
+            this.modelStateConverter
+                .Setup(m => m.AsString(this.webhookController.ModelState))
+                .Returns("Model validation errors");
+
+            this.webhookController.ModelState.AddModelError("key", "Some model error");
+
+            ContentResult result = await this.webhookController.PostAsync();
+
+            Assert.StrictEqual<int?>((int) HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.Equal("Model validation errors", result.Content);
+        }
 
         // [Fact]
         // public async Task ItShouldRespondWithBadGatewayWhenUpstreamReturnsError() {
