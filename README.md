@@ -26,7 +26,7 @@ The sole exposed endpoint can be found at `/api/webhook`, which:
 
 * responds to `HTTP POST`
 * accepts GitHub [webhook-conforming payloads](https://developer.github.com/webhooks/#example-delivery)
-* validates requests based upon the signature found in the `X-Hub-Signature` header
+* is secured by the signature found in the `X-Hub-Signature` header
 
 
 ### Environment Variables
