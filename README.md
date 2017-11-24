@@ -22,7 +22,7 @@ Once the dependencies have been installed, one can run:
 * `dotnet xunit` - execute the unit tests
 * `dotnet start` - start the server
 
-The sole exposed endpoint can be found at `/api/webhook/`, which:
+The sole exposed endpoint can be found at `/api/webhook`, which:
 
 * responds to `HTTP POST`
 * accepts GitHub [webhook-conforming payloads](https://developer.github.com/webhooks/#example-delivery)
