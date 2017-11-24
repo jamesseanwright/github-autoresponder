@@ -17,7 +17,7 @@ An ASP.NET Core webhook for automatically responding to GitHub issues and PRs.
 * `cd github-autoresponder`
 * `dotnet restore`
 
-Once the dependencies have been installed, one can run:
+Then one can run:
 
 * `dotnet xunit` - execute the unit tests
 * `dotnet start` - start the server
