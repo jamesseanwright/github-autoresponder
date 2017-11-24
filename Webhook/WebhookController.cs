@@ -36,7 +36,7 @@ namespace GitHubAutoresponder.Webhook {
 
         [HttpPost]
         public async Task<ContentResult> PostAsync() {
-            /* We need the raw body to valid the request
+            /* We need the raw body to validate the request
              * by computing a HMAC hash from it based upon
              * the secret key. We then manually deserialise
              * it for validation and further manipulation.
